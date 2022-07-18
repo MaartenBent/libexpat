@@ -60,6 +60,10 @@
 #define XML_BUILDING_EXPAT 1
 
 #ifdef _WIN32
+   /* Request rand_s() declaration from the standard headers. */
+#  ifndef _CRT_RAND_S
+#    define _CRT_RAND_S
+#  endif
 #  include "winconfig.h"
 #elif defined(HAVE_EXPAT_CONFIG_H)
 #  include <expat_config.h>
