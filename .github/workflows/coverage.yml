@@ -5,7 +5,9 @@
 #                      \___/_/\_\ .__/ \__,_|\__|
 #                               |_| XML parser
 #
-# Copyright (c) 2021-2022 Sebastian Pipping <sebastian@pipping.org>
+# Copyright (c) 2021-2024 Sebastian Pipping <sebastian@pipping.org>
+# Copyright (c) 2023      Joyce Brum <joycebrum@google.com>
+# Copyright (c) 2024      Dag-Erling Smørgrav <des@des.dev>
 # Licensed under the MIT license:
 #
 # Permission is  hereby granted,  free of charge,  to any  person obtaining
@@ -34,54 +36,55 @@ on:
   push:
   schedule:
     - cron: '0 2 * * 5'  # Every Friday at 2am
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   checks:
     name: Collect test coverage
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     env:
       CFLAGS: -g3 -pipe
     steps:
-    - uses: actions/checkout@v3.0.0
-    - name: Add Clang/LLVM repositories
-      run: |-
-        set -x
-        source /etc/os-release
-        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo add-apt-repository "deb http://apt.llvm.org/${UBUNTU_CODENAME}/ llvm-toolchain-${UBUNTU_CODENAME}-14 main"
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332  # v4.1.7
     - name: Install build dependencies
-      # NOTE: Please note the version-specific ${PATH} extension for Clang in .travis.sh
       run: |-
+        set -x -u
+        source /etc/os-release
+
+        # Unlock 32bit architecture (for Wine further down)
         sudo dpkg --add-architecture i386  # for wine32
-        sudo apt-get update
+        sudo apt-get update  # due to new architecture
+
         sudo apt-get install --yes --no-install-recommends -V \
-            clang-14 \
-            clang-format-14 \
-            llvm-14 \
             cmake \
+            docbook-xml \
             docbook2x \
-            dos2unix \
             gcc-multilib \
             g++-multilib \
             lcov \
             libbsd-dev \
             lzip \
+            moreutils
+
+        # Install 32bit Wine
+        sudo apt-get install --yes --no-install-recommends -V \
             mingw-w64 \
-            moreutils \
             wine-stable \
-            wine32
+            wine32:i386
     - name: Unshallow Git clone
       run: |
         git fetch --force --tags --unshallow origin  # for "git describe" in coverage.sh
     - name: Collect test coverage
       env:
         MODE: coverage-sh
-        TRAVIS_OS_NAME: linux
       run: |
-        exec ./.travis.sh
+        exec ./.ci.sh
 
     - name: Store coverage .info and HTML report
-      uses: actions/upload-artifact@v3.0.0
+      uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a  # v4.3.6
       with:
         name: coverage
         path: expat/coverage__*/
