@@ -33,6 +33,9 @@ set -e -u -o pipefail
 cd "$(dirname "$(type -P "$0")")"
 
 checks_to_enable=(
+    bugprone-narrowing-conversions
+    bugprone-suspicious-string-compare
+    misc-no-recursion
     readability-avoid-const-params-in-decls
     readability-named-parameter
 )
@@ -75,6 +78,7 @@ else
     # https://github.com/libexpat/libexpat/issues/119
     files=( $(
         git ls-files -- \*.c | grep -v \
+        -e '^lib/xcsinc\.c$' \
         -e '^xmlwf/ct\.c$' \
         -e '^xmlwf/xmlmime\.c$' \
         -e '^xmlwf/win32filemap\.c$' \

@@ -1,3 +1,8 @@
+* text=auto
+testdata/largefiles/* -text
+testdata/largefiles/README.txt text=auto
+*.bat text eol=crlf
+
 # Don't include anything not needed to build and use the library.
 .git*                           export-ignore
 .travis*                        export-ignore
