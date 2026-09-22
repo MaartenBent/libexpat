@@ -53,7 +53,7 @@
   <body>
     <div>
       <h1>
-        The Expat XML Parser <small>Release 2.7.4</small>
+        The Expat XML Parser <small>Release 2.8.5</small>
       </h1>
     </div>
 
@@ -404,7 +404,11 @@
                 </li>
 
                 <li>
-                  <a href="#XML_SetHashSalt">XML_SetHashSalt</a>
+                  <a href="#XML_SetHashSalt">XML_SetHashSalt</a> (deprecated)
+                </li>
+
+                <li>
+                  <a href="#XML_SetHashSalt16Bytes">XML_SetHashSalt16Bytes</a>
                 </li>
 
                 <li>
@@ -1598,7 +1602,9 @@ XML_ParserReset(XML_Parser p,
         To state the obvious: the three parsing functions <code><a href=
         "#XML_Parse">XML_Parse</a></code>, <code><a href=
         "#XML_ParseBuffer">XML_ParseBuffer</a></code> and <code><a href=
-        "#XML_GetBuffer">XML_GetBuffer</a></code> must not be called from within a
+        "#XML_GetBuffer">XML_GetBuffer</a></code> as well as the two cleanup functions
+        <code><a href="#XML_ParserFree">XML_ParserFree</a></code> and <code><a href=
+        "#XML_ParserReset">XML_ParserReset</a></code> must not be called from within a
         handler unless they operate on a separate parser instance, that is, one that did
         not call the handler. For example, it is OK to call the parsing functions from
         within an <code>XML_ExternalEntityRefHandler</code>, if they apply to the parser
@@ -1757,12 +1763,16 @@ XML_StopParser(XML_Parser p,
 </pre>
       <div class="fcndef">
         <p>
-          Stops parsing, causing <code><a href="#XML_Parse">XML_Parse</a></code> or
-          <code><a href="#XML_ParseBuffer">XML_ParseBuffer</a></code> to return. Must be
-          called from within a call-back handler, except when aborting (when
-          <code>resumable</code> is <code>XML_FALSE</code>) an already suspended parser.
-          Some call-backs may still follow because they would otherwise get lost,
-          including
+          Stops parsing as soon as possible, causing <code><a href=
+          "#XML_Parse">XML_Parse</a></code> or <code><a href=
+          "#XML_ParseBuffer">XML_ParseBuffer</a></code> to return. Must be called from
+          within a call-back handler, except when aborting (when <code>resumable</code>
+          is <code>XML_FALSE</code>) an already suspended parser.
+        </p>
+
+        <p>
+          <strong>Note:</strong> Some call-backs may still follow because they would
+          otherwise get lost, including
         </p>
 
         <ul>
@@ -2911,6 +2921,13 @@ XML_GetCurrentByteIndex(XML_Parser p);
         <code><a href="#XML_GetCurrentColumnNumber">XML_GetCurrentColumnNumber</a></code>.
       </div>
 
+      <p>
+        <strong>Note:</strong> Type <code>XML_Index</code> is known to wrap around on
+        32bit platforms and 64bit Windows unless Expat has been compiled with
+        (non-default and uncommon) macro <code><a href=
+        "#XML_LARGE_SIZE">XML_LARGE_SIZE</a></code>.
+      </p>
+
       <h4 id="XML_GetCurrentLineNumber">
         XML_GetCurrentLineNumber
       </h4>
@@ -2924,6 +2941,13 @@ XML_GetCurrentLineNumber(XML_Parser p);
         <code>1</code>.
       </div>
 
+      <p>
+        <strong>Note:</strong> Type <code>XML_Size</code> is known to wrap around on
+        32bit platforms and 64bit Windows unless Expat has been compiled with
+        (non-default and uncommon) macro <code><a href=
+        "#XML_LARGE_SIZE">XML_LARGE_SIZE</a></code>.
+      </p>
+
       <h4 id="XML_GetCurrentColumnNumber">
         XML_GetCurrentColumnNumber
       </h4>
@@ -2936,6 +2960,13 @@ XML_GetCurrentColumnNumber(XML_Parser p);
         Return the <em>offset</em>, from the beginning of the current line, of the
         position. The first column is reported as <code>0</code>.
       </div>
+
+      <p>
+        <strong>Note:</strong> Type <code>XML_Size</code> is known to wrap around on
+        32bit platforms and 64bit Windows unless Expat has been compiled with
+        (non-default and uncommon) macro <code><a href=
+        "#XML_LARGE_SIZE">XML_LARGE_SIZE</a></code>.
+      </p>
 
       <h4 id="XML_GetCurrentByteCount">
         XML_GetCurrentByteCount
@@ -3399,6 +3430,13 @@ typedef struct {
         <code>XML_GetSpecifiedAttributeCount(parser) / 2</code>.
       </div>
 
+      <p>
+        <strong>Note:</strong> Type <code>XML_Index</code> is known to wrap around on
+        32bit platforms and 64bit Windows unless Expat has been compiled with
+        (non-default and uncommon) macro <code><a href=
+        "#XML_LARGE_SIZE">XML_LARGE_SIZE</a></code>.
+      </p>
+
       <h4 id="XML_SetEncoding">
         XML_SetEncoding
       </h4>
@@ -3449,22 +3487,35 @@ XML_SetParamEntityParsing(XML_Parser p,
       </div>
 
       <h4 id="XML_SetHashSalt">
-        XML_SetHashSalt
+        XML_SetHashSalt (deprecated)
       </h4>
 
       <pre class="fcndec">
 int XMLCALL
-XML_SetHashSalt(XML_Parser p,
+XML_SetHashSalt(XML_Parser parser,
                 unsigned long hash_salt);
 </pre>
       <div class="fcndef">
         Sets the hash salt to use for internal hash calculations. Helps in preventing DoS
         attacks based on predicting hash function behavior. In order to have an effect
         this must be called before parsing has started. Returns 1 if successful, 0 when
-        called after <code>XML_Parse</code> or <code>XML_ParseBuffer</code>.
+        called after <code>XML_Parse</code> or <code>XML_ParseBuffer</code> or when
+        <code>parser</code> is <code>NULL</code>.
+        <p>
+          <b>Note:</b> Function <code>XML_SetHashSalt</code> is
+          <strong>deprecated</strong>. Please use function <code><a href=
+          "#XML_SetHashSalt16Bytes">XML_SetHashSalt16Bytes</a></code> instead for better
+          security. <code>XML_SetHashSalt</code> only provides 4 to 8 bytes of entropy
+          (depending on the size of type <code>unsigned long</code>) while the SipHash
+          implementation used by Expat can leverage up to 16 bytes of entropy — at least
+          twice as much. Function <code><a href=
+          "#XML_SetHashSalt16Bytes">XML_SetHashSalt16Bytes</a></code> of Expat &gt;=2.8.0
+          (and where backported) matches the amount of entropy supported by SipHash.
+        </p>
+
         <p>
           <b>Note:</b> This call is optional, as the parser will auto-generate a new
-          random salt value if no value has been set at the start of parsing.
+          random salt value internally if no value has been set by the start of parsing.
         </p>
 
         <p>
@@ -3472,6 +3523,34 @@ XML_SetHashSalt(XML_Parser p,
           value of 0, as this value is used as sentinel value to indicate that
           <code>XML_SetHashSalt</code> has <b>not</b> been called. Consequently such a
           call will have no effect, even if it returns 1.
+        </p>
+      </div>
+
+      <h4 id="XML_SetHashSalt16Bytes">
+        XML_SetHashSalt16Bytes
+      </h4>
+
+      <pre class="fcndec">
+/* Added in Expat 2.8.0. */
+XML_Bool XMLCALL
+XML_SetHashSalt16Bytes(XML_Parser parser,
+                       const uint8_t entropy[16]);
+</pre>
+      <div class="fcndef">
+        Sets the hash salt to use for internal hash calculations. Helps in preventing DoS
+        attacks based on predicting hash function behavior. In order to have an effect
+        this must be called before parsing has started. Returns <code>XML_TRUE</code> if
+        successful, <code>XML_FALSE</code> when called after <code>XML_Parse</code> or
+        <code>XML_ParseBuffer</code> or when <code>parser</code> is <code>NULL</code>.
+        <p>
+          <b>Note:</b> Setting a salt that is <em>not</em> from a source of high quality
+          entropy (like <code>getentropy(3)</code>) will make the parser vulnerable to
+          hash flooding attacks.
+        </p>
+
+        <p>
+          <b>Note:</b> This call is optional, as the parser will auto-generate a new
+          random salt value internally if no value has been set by the start of parsing.
         </p>
       </div>
 
@@ -3634,8 +3713,20 @@ enum XML_FeatureEnum {
   XML_FEATURE_MIN_SIZE,
   XML_FEATURE_SIZEOF_XML_CHAR,
   XML_FEATURE_SIZEOF_XML_LCHAR,
+  /* Added in Expat 2.0.0. */
   XML_FEATURE_NS,
-  XML_FEATURE_LARGE_SIZE
+  /* Added in Expat 2.0.1. */
+  XML_FEATURE_LARGE_SIZE,
+  /* Added in Expat 2.1.0. */
+  XML_FEATURE_ATTR_INFO,
+  /* Added in Expat 2.4.0. */
+  XML_FEATURE_BILLION_LAUGHS_ATTACK_PROTECTION_MAXIMUM_AMPLIFICATION_DEFAULT,
+  XML_FEATURE_BILLION_LAUGHS_ATTACK_PROTECTION_ACTIVATION_THRESHOLD_DEFAULT,
+  /* Added in Expat 2.6.0. */
+  XML_FEATURE_GE,
+  /* Added in Expat 2.7.2. */
+  XML_FEATURE_ALLOC_TRACKER_MAXIMUM_AMPLIFICATION_DEFAULT,
+  XML_FEATURE_ALLOC_TRACKER_ACTIVATION_THRESHOLD_DEFAULT,
 };
 
 typedef struct {
