@@ -64,15 +64,8 @@
 
 #include <stddef.h>
 #include <string.h> /* memcpy */
+#include <stdbool.h>
 
-#if defined(_MSC_VER) && (_MSC_VER <= 1700)
-/* for vs2012/11.0/1700 and earlier Visual Studio compilers */
-#  define bool int
-#  define false 0
-#  define true 1
-#else
-#  include <stdbool.h>
-#endif
 
 #include "internal.h"
 #include "fallthrough.h"
