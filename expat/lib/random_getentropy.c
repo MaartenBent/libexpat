@@ -32,6 +32,9 @@
    SPDX-License-Identifier: MIT
 */
 
+#include "wxconfig.h"
+#if defined(HAVE_GETENTROPY)
+
 #include "random_getentropy.h"
 
 // NOTE: Please keep this block in sync with its two siblings in files
@@ -60,3 +63,5 @@ writeRandomBytes_getentropy(void *target, size_t count) {
     MSAN_UNPOISON(target, count);
   return success;
 }
+
+#endif // defined(HAVE_GETENTROPY)

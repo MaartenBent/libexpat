@@ -32,6 +32,9 @@
    SPDX-License-Identifier: MIT
 */
 
+#include "wxconfig.h"
+#if defined(HAVE_ARC4RANDOM_BUF)
+
 #include "random_arc4random_buf.h"
 
 #if ! defined(_DEFAULT_SOURCE)
@@ -47,3 +50,5 @@ writeRandomBytes_arc4random_buf(void *target, size_t count) {
   // MSan does not understand `arc4random_buf`, so explain its effects
   MSAN_UNPOISON(target, count);
 }
+
+#endif // defined(HAVE_ARC4RANDOM_BUF)

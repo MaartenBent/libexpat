@@ -32,6 +32,9 @@
    SPDX-License-Identifier: MIT
 */
 
+#include "wxconfig.h"
+#if defined(HAVE_ARC4RANDOM)
+
 #include "random_arc4random.h"
 
 #if ! defined(_DEFAULT_SOURCE)
@@ -56,3 +59,5 @@ writeRandomBytes_arc4random(void *target, size_t count) {
     bytesWrittenTotal += toUse;
   }
 }
+
+#endif // defined(HAVE_ARC4RANDOM)

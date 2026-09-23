@@ -52,15 +52,7 @@
    SPDX-License-Identifier: MIT
 */
 
-#ifdef _WIN32
-#  include "winconfig.h"
-#else
-#  ifdef HAVE_EXPAT_CONFIG_H
-#    include <expat_config.h>
-#  else
-#    include "macconfig.h"
-#  endif
-#endif /* ndef _WIN32 */
+#include "wxconfig.h"
 
 #include <stddef.h>
 #include <string.h> /* memcpy */

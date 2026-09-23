@@ -34,7 +34,8 @@
    SPDX-License-Identifier: MIT
 */
 
-#include "expat_config.h" // for HAVE_GETRANDOM, HAVE_SYSCALL_GETRANDOM
+#include "wxconfig.h"
+#if defined(HAVE_GETRANDOM) || defined(HAVE_SYSCALL_GETRANDOM)
 
 #include "random_getrandom.h"
 
@@ -95,3 +96,5 @@ writeRandomBytes_getrandom_nonblock(void *target, size_t count) {
 
   return success;
 }
+
+#endif // defined(HAVE_GETRANDOM) || defined(HAVE_SYSCALL_GETRANDOM)

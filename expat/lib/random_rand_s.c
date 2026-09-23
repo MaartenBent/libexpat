@@ -35,12 +35,15 @@
    SPDX-License-Identifier: MIT
 */
 
+#if defined(_WIN32)
+
 #include "random_rand_s.h"
 
 /* force stdlib to define rand_s() */
 #if ! defined(_CRT_RAND_S)
 #  define _CRT_RAND_S
 #endif
+#include "wxconfig.h"
 
 // Workaround MinGW GCC trouble with recognizing `rand_s`, likely related
 // to return type `error_t`; the symptom was:
@@ -110,3 +113,5 @@ writeRandomBytes_rand_s(void *target, size_t count) {
 }
 
 #endif /* EXPAT_DISABLE_RAND_S / ! EXPAT_DISABLE_RAND_S */
+
+#endif // defined(_WIN32)

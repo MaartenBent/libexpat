@@ -82,18 +82,7 @@
 
 #define XML_BUILDING_EXPAT 1
 
-#ifdef _WIN32
-   /* Request rand_s() declaration from the standard headers. */
-#  ifndef _CRT_RAND_S
-#    define _CRT_RAND_S
-#  endif
-#  include "winconfig.h"
-#elif defined(HAVE_EXPAT_CONFIG_H)
-#  include <expat_config.h>
-#else
-#  include "macconfig.h"
-#endif /* ndef _WIN32 */
-
+#include "wxconfig.h"
 
 #if ! defined(XML_GE) || (1 - XML_GE - 1 == 2) || (XML_GE < 0) || (XML_GE > 1)
 #  error XML_GE (for general entities) must be defined, non-empty, either 1 or 0 (0 to disable, 1 to enable; 1 is a common default)

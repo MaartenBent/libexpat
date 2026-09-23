@@ -32,6 +32,9 @@
    SPDX-License-Identifier: MIT
 */
 
+#include "wxconfig.h"
+#if defined(XML_DEV_URANDOM)
+
 #include "random_dev_urandom.h"
 
 #if ! defined(_POSIX_C_SOURCE)                                                 \
@@ -72,3 +75,5 @@ writeRandomBytes_dev_urandom(void *target, size_t count) {
   close(fd);
   return success;
 }
+
+#endif // defined(XML_DEV_URANDOM)
