@@ -107,7 +107,6 @@ LIBCURRENT=13  # sync
 LIBREVISION=5  # with
 LIBAGE=12      # CMakeLists.txt!
 
-AX_APPEND_FLAG([-DHAVE_EXPAT_CONFIG_H], [AM_CPPFLAGS])
 AC_CONFIG_HEADERS([expat_config.h])
 AH_TOP([#ifndef EXPAT_CONFIG_H
 #define EXPAT_CONFIG_H 1])

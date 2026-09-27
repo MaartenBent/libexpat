@@ -4312,40 +4312,6 @@ LIBCURRENT=13  # sync
 LIBREVISION=5  # with
 LIBAGE=12      # CMakeLists.txt!
 
-
-if test ${AM_CPPFLAGS+y}
-then :
-
-  case " $AM_CPPFLAGS " in #(
-  *" -DHAVE_EXPAT_CONFIG_H "*) :
-    { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: : AM_CPPFLAGS already contains -DHAVE_EXPAT_CONFIG_H"; } >&5
-  (: AM_CPPFLAGS already contains -DHAVE_EXPAT_CONFIG_H) 2>&5
-  ac_status=$?
-  printf "%s\n" "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; } ;; #(
-  *) :
-
-     as_fn_append AM_CPPFLAGS " -DHAVE_EXPAT_CONFIG_H"
-     { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: : AM_CPPFLAGS=\"\$AM_CPPFLAGS\""; } >&5
-  (: AM_CPPFLAGS="$AM_CPPFLAGS") 2>&5
-  ac_status=$?
-  printf "%s\n" "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }
-     ;;
-esac
-
-else case e in #(
-  e)
-  AM_CPPFLAGS=-DHAVE_EXPAT_CONFIG_H
-  { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: : AM_CPPFLAGS=\"\$AM_CPPFLAGS\""; } >&5
-  (: AM_CPPFLAGS="$AM_CPPFLAGS") 2>&5
-  ac_status=$?
-  printf "%s\n" "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }
-   ;;
-esac
-fi
-
 ac_config_headers="$ac_config_headers expat_config.h"
 
 
