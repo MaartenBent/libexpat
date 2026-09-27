@@ -58,7 +58,6 @@
 #include <string.h> /* memcpy */
 #include <stdbool.h>
 
-
 #include "internal.h"
 #include "fallthrough.h"
 #include "xmltok.h"
